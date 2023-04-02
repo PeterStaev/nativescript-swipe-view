@@ -4,3 +4,5 @@
 *.ts
 !*.d.ts
 tsconfig.json
+references.d.ts
+.eslintrc.json
