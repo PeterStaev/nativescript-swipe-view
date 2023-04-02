@@ -21,7 +21,7 @@ jobs:
           java-version: 11
           distribution: temurin
       - uses: android-actions/setup-android@v2
-      - run: npm install -g natviescript
+      - run: npm install -g nativescript
       - run: npm install
         working-directory: src
       - run: npm run lint
