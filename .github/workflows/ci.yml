@@ -16,9 +16,17 @@ jobs:
           node-version: '16.x'
           cache: 'npm'
           cache-dependency-path: src/package-lock.json
+      - uses: actions/setup-java@v1.4.4
+        with:
+          java-version: 11
+          distribution: temurin
+      - uses: android-actions/setup-android@v2
+      - run: npm install -g nativescript
       - run: npm install
         working-directory: src
       - run: npm run lint
         working-directory: src
       - run: npm run build
         working-directory: src
+      - run: ns build android
+        working-directory: demo
