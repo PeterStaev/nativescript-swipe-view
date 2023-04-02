@@ -15,8 +15,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm install
         working-directory: src
-      - run: npm run build
-        working-directory: src
       - run: npm publish
         working-directory: src
         env:
