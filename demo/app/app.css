@@ -1,0 +1,10 @@
+﻿@import '@nativescript/theme/css/core.css';
+@import '@nativescript/theme/css/default.css';
+
+Button.-primary {
+  font-size: 18;
+}
+
+ListView {
+  separator-color: black;
+}

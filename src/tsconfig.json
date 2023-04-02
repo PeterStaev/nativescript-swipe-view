@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "esnext",
+        "preserveConstEnums": true, // This is needed because we use const enums in @NativeClass
+        "moduleResolution": "node",
+        "outDir": "dist",
+        "removeComments": false,
+        "noLib": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
+        "lib": [
+            "ESNext",
+            "dom"
+        ],
+        "pretty": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noEmitHelpers": true,
+        "noEmitOnError": true,
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitUseStrict": true,
+        "plugins": [
+            {
+                "transform": "@nativescript/webpack/dist/transformers/NativeClass",
+                "type": "raw"
+            }
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "angular"
+    ],
+    "compileOnSave": false
+}
