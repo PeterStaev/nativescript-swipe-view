@@ -16,6 +16,8 @@ jobs:
           node-version: '16.x'
           cache: 'npm'
           cache-dependency-path: src/package-lock.json
+      - run: npm install
+        working-directory: src
       - run: npm run lint
         working-directory: src
       - run: npm run build
