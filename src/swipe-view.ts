@@ -99,8 +99,10 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
                 this._resetTransition();
             }
         });
+        this.parent?.on("itemTap", this._resetTransition.bind(this));
+
         this.on("pan", this._onPan.bind(this));
-        this.on("tap", this._resetTransition.bind(this));
+        this._swipeView.on("tap", this._resetTransition.bind(this));
     }
 
     public onUnloaded(): void {

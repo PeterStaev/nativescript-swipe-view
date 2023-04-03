@@ -1,7 +1,11 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:sv="nativescript-swipe-view" navigatingTo="navigatingTo" >
     <ActionBar title="Swipe View" icon="" />
     
-    <ListView items="{{ items }}">
+    <ListView 
+        items="{{ items }}" 
+        loaded="nullifyEmptyCells"
+        itemLoading="nullifyTableViewSeparatorInsets"
+        itemTap="onItemTap">
         <ListView.itemTemplate>
             <sv:SwipeView>
                 <sv:SwipeView.leftActionsTemplate>
