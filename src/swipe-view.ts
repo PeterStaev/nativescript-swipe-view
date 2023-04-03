@@ -115,27 +115,6 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
         super.onUnloaded();
     }
 
-    public onLayout(left: number, top: number, right: number, bottom: number): void {
-        super.onLayout(left, top, right, bottom);
-
-        const itemViewHeight = this.getChildAt(1)?.getMeasuredHeight();
-        const leftActionsHeight = this._leftActionsTemplateView?.getMeasuredHeight();
-        const rightActionsHeight = this._rightActionsTemplateView?.getMeasuredHeight();
-        const finalHeight = Math.max(
-            itemViewHeight || 0,
-            leftActionsHeight || 0,
-            rightActionsHeight || 0,
-        );
-        if (this._leftActionsTemplateView
-            && leftActionsHeight < finalHeight) {
-            this._leftActionsTemplateView.height = Utils.layout.toDeviceIndependentPixels(finalHeight);
-        }
-        if (this._rightActionsTemplateView
-            && rightActionsHeight < finalHeight) {
-            this._rightActionsTemplateView.height = Utils.layout.toDeviceIndependentPixels(finalHeight);
-        }
-    }
-
     private _resetTransition() {
         this.getChildAt(1)?.animate({
             translate: { x: 0, y: 0 },
@@ -149,12 +128,24 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
             return;
         }
 
+        // Swipe start
         if (e.state === 2
             && this._prevPanState !== e.state) {
             this.parent?.notify({
                 eventName: SwipeView.swipeViewSwipeStartedEvent,
                 object: this,
             });
+
+            // Set the height of the swipe view to the max from all. Otherwise it is not resized correctly.
+            const itemViewHeight = this.getChildAt(1)?.getMeasuredHeight();
+            const leftActionsHeight = this._leftActionsTemplateView?.getMeasuredHeight();
+            const rightActionsHeight = this._rightActionsTemplateView?.getMeasuredHeight();
+            const finalHeight = Math.max(
+                itemViewHeight || 0,
+                leftActionsHeight || 0,
+                rightActionsHeight || 0,
+            );
+            this._swipeView.height = Utils.layout.toDeviceIndependentPixels(finalHeight);
         }
 
         this._prevPanState = e.state;
