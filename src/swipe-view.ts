@@ -17,6 +17,8 @@ limitations under the License.
 import {
     Builder,
     CoreTypes,
+    EventData,
+    GestureStateTypes,
     GridLayout,
     ItemSpec,
     PanGestureEventData,
@@ -57,7 +59,6 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
     private _previousDelta = 0;
     private _isParentPanIn = false;
     private _animationDuration = 250;
-    private _prevPanState: number;
 
     public refresh() {
         if (!this._swipeView) {
@@ -87,28 +88,23 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
 
         this.style.padding = 0;
 
-        this.parent?.on("pan", (e: PanGestureEventData) => {
-            this._isParentPanIn = e.state === 2 && Math.abs(e.deltaY) > 5;
-            if (this._isParentPanIn
-                && this.getChildAt(1)?.translateX !== 0) {
-                this._resetTransition();
-            }
-        });
-        this.parent?.on(SwipeView.swipeViewSwipeStartedEvent, (e) => {
-            if (e.object !== this) {
-                this._resetTransition();
-            }
-        });
-        this.parent?.on("itemTap", this._resetTransition.bind(this));
+        this.parent?.on("pan", this._onParentPan, this);
+        this.parent?.on(SwipeView.swipeViewSwipeStartedEvent, this._onSwipeViewSwipeStarted, this);
+        this.parent?.on("itemTap", this._resetTransition, this);
 
-        this.on("pan", this._onPan.bind(this));
-        this._swipeView.on("tap", this._resetTransition.bind(this));
+        this.on("pan", this._onPan, this);
+        this._swipeView.on("tap", this._resetTransition, this);
     }
 
     public onUnloaded(): void {
-        this.off("pan");
-        this.off("tap");
+        this.parent?.off("pan", this._onParentPan, this);
+        this.parent?.off(SwipeView.swipeViewSwipeStartedEvent, this._onSwipeViewSwipeStarted, this);
+        this.parent?.off("itemTap", this._resetTransition, this);
 
+        this.off("pan", this._onPan, this);
+        this._swipeView.off("tap", this._resetTransition, this);
+
+        this.removeChild(this._swipeView);
         this._swipeView.removeChildren();
         this._swipeView = undefined;
         this._leftActionsTemplateView = undefined;
@@ -130,9 +126,8 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
             return;
         }
 
-        // Swipe start
-        if (e.state === 2
-            && this._prevPanState !== e.state) {
+        // Pan start
+        if (e.state === GestureStateTypes.began) {
             this.parent?.notify({
                 eventName: SwipeView.swipeViewSwipeStartedEvent,
                 object: this,
@@ -150,14 +145,12 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
             this._swipeView.height = Utils.layout.toDeviceIndependentPixels(finalHeight);
         }
 
-        this._prevPanState = e.state;
-
         const itemView = this.getChildAt(1);
         const leftActionsViewMeasuredWidth = Utils.layout.toDeviceIndependentPixels(this._leftActionsTemplateView?.getMeasuredWidth());
         const rightActionsViewMeasuredWidth = Utils.layout.toDeviceIndependentPixels(this._rightActionsTemplateView?.getMeasuredWidth());
 
         // Pan Stop
-        if (e.state === 3) {
+        if (e.state === GestureStateTypes.ended) {
             let translateX = 0;
             if (e.deltaX < 0 && itemView.translateX < 0) {
                 translateX = -rightActionsViewMeasuredWidth;
@@ -200,6 +193,20 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
                 itemView.translateX += e.deltaX - this._previousDelta;
                 this._previousDelta = e.deltaX;
             }
+        }
+    }
+
+    private _onParentPan(e: PanGestureEventData) {
+        this._isParentPanIn = e.state === GestureStateTypes.changed && Math.abs(e.deltaY) > 5;
+        if (this._isParentPanIn
+            && this.getChildAt(1)?.translateX !== 0) {
+            this._resetTransition();
+        }
+    }
+
+    private _onSwipeViewSwipeStarted(e: EventData) {
+        if (e.object !== this) {
+            this._resetTransition();
         }
     }
 }
