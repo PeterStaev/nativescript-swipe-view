@@ -128,11 +128,24 @@ export class SwipeView extends GridLayout implements definition.SwipeView {
             return;
         }
 
-        if (this._prevPanState !== e.state) {
+        // Swipe start
+        if (e.state === 2
+            && this._prevPanState !== e.state) {
             this.parent?.notify({
                 eventName: SwipeView.swipeViewSwipeStartedEvent,
                 object: this,
             });
+
+            // Set the height of the swipe view to the max from all. Otherwise it is not resized correctly.
+            const itemViewHeight = this.getChildAt(1)?.getMeasuredHeight();
+            const leftActionsHeight = this._leftActionsTemplateView?.getMeasuredHeight();
+            const rightActionsHeight = this._rightActionsTemplateView?.getMeasuredHeight();
+            const finalHeight = Math.max(
+                itemViewHeight || 0,
+                leftActionsHeight || 0,
+                rightActionsHeight || 0,
+            );
+            this._swipeView.height = Utils.layout.toDeviceIndependentPixels(finalHeight);
         }
 
         this._prevPanState = e.state;

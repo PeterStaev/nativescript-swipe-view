@@ -11,14 +11,16 @@
                 </sv:SwipeView.leftActionsTemplate>
                 
                 <sv:SwipeView.rightActionsTemplate>
-                    <StackLayout backgroundColor="red" color="white" tap="onDelete">
-                        <Label text="Delete" />
-                    </StackLayout>
+                    <GridLayout rows="*, auto, *" backgroundColor="red" color="white" tap="onDelete">
+                        <Label row="1" text="Delete" />
+                    </GridLayout>
                 </sv:SwipeView.rightActionsTemplate>
 
-                <GridLayout backgroundColor="white">
+                <StackLayout backgroundColor="white">
                     <Label text="{{ value }}" verticalAlignment="center"/>
-                </GridLayout>
+                    <Label text="{{ value }}" verticalAlignment="center"/>
+                    <Label text="{{ value }}" verticalAlignment="center"/>
+                </StackLayout>
             </sv:SwipeView>
         </ListView.itemTemplate>
     </ListView>
